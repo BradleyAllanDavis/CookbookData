@@ -27,28 +27,36 @@ def main():
         response = ul.urlopen(search_link)
 
         epicurious_soup = BeautifulSoup(response, 'lxml')
-        sector_result = epicurious_soup.find('div', class_='sr_rows clearfix firstResult')
-        first_recipe = sector_result.find_all('a')[0].get('href')
 
-        recipe_link = 'http://www.epicurious.com' + first_recipe
-        url_recipe = ul.urlopen(recipe_link)
-        recipe_soup = BeautifulSoup(url_recipe)
+        # first result has class firstResult, the rest don't
+        # all_recipes = epicurious_soup.find('div', class_='sr_rows clearfix firstResult')
+        all_recipes = epicurious_soup.find_all('div', attrs={"class": 'sr_rows clearfix '})
 
-        name = recipe_soup.find('div', class_='title-source').find('h1').get_text()
+        for recipe in all_recipes:
+            # first 'a' has the url suffix
+            recipe_name = recipe.find_all('a')[0].get('href')
 
-        if recipe_soup.find('div', class_='dek').get_text('p'):
-            description = recipe_soup.find('div', class_='dek').get_text('p')
-        else:
-            description = "None"
+            recipe_link = 'http://www.epicurious.com' + recipe_name
+            url_recipe = ul.urlopen(recipe_link)
+            recipe_soup = BeautifulSoup(url_recipe, "lxml")
 
-        ingredients = recipe_soup.find('div', class_='ingredients-info').get_text(separator="\n")
-        preparation = recipe_soup.find('div', class_='instructions', itemprop='recipeInstructions').find('li').get_text(
-            separator="\n")
+            name = recipe_soup.find('div', class_='title-source').find('h1').get_text()
 
-        print("\n" + 'Name: ' + name + "\n")
-        print("Description: " + str(description.encode('utf-8')) + "\n")
-        print(ingredients)
-        print("Preparation: " + "\n" + str(preparation))
+            if recipe_soup.find('div', class_='dek') is not None:
+                description = recipe_soup.find('div', class_='dek').get_text('p')
+            else:
+                description = "None"
+
+            ingredients = recipe_soup.find('div', class_='ingredients-info').get_text(separator="\n")
+            preparation = recipe_soup.find('div', class_='instructions', itemprop='recipeInstructions').find(
+                'li').get_text(
+                separator="\n")
+
+            print("--------")
+            print("\n" + 'Name: ' + name + "\n")
+            print("Description: " + str(description.encode('utf-8')) + "\n")
+            print(str(ingredients.encode('utf-8')))
+            print("Preparation: " + "\n" + str(preparation.encode('utf-8')))
 
 
 if __name__ == "__main__":

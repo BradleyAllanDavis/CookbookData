@@ -1,61 +1,107 @@
-import urllib.request as ul
+from urllib import request
 
 from bs4 import BeautifulSoup
 
+number_of_recipes_to_scrape = 1000
+recipes_per_page = 30  # max seems to be 30
+
 
 def main():
-    number_of_recipes_to_scrape = 1000
-    page_size = 20
-    page_count = int(number_of_recipes_to_scrape / page_size)
-    for page_number in range(page_count):
-        search_link = get_search_url(page_number, page_size)
-        response = ul.urlopen(search_link)
+    page_count = int(number_of_recipes_to_scrape / recipes_per_page)
 
-        page_soup = BeautifulSoup(response, 'lxml')
+    for page_index in range(page_count):
+        page_url = get_page_url(page_index, recipes_per_page)
+        page_soup = BeautifulSoup(request.urlopen(page_url), 'lxml')
+        page_recipes = get_recipes_in_page(page_soup)
 
-        # first result has class firstResult, the rest don't
-        page_recipes = [(page_soup.find('div', class_='sr_rows clearfix firstResult'))]
-        rest_of_recipes = page_soup.find_all('div', attrs={"class": 'sr_rows clearfix '})
-        for r in rest_of_recipes:
-            page_recipes.append(r)
-
-        print("Found " + str(len(page_recipes)) + " in this page")
-        for recipe in page_recipes:
-            # first 'a' has the url suffix
-            recipe_name = recipe.find_all('a')[0].get('href')
-
-            recipe_link = 'http://www.epicurious.com' + recipe_name
-            url_recipe = ul.urlopen(recipe_link)
-            recipe_soup = BeautifulSoup(url_recipe, "lxml")
-
-            name = recipe_soup.find('div', class_='title-source').find('h1').get_text()
-
-            if recipe_soup.find('div', class_='dek') is not None:
-                description = recipe_soup.find('div', class_='dek').get_text('p')
-            else:
-                description = "None"
-
-            ingredients = "^".join(i.text for i in recipe_soup.find('div', class_='ingredients-info').find_all(
-                'li', itemprop="ingredients"))
-            preparation = recipe_soup.find('div', class_='instructions', itemprop='recipeInstructions').find(
-                'li').get_text(separator=" ")
-
-            print("--------")
-            print('Name: ' + name + "\n")
-            print("Description: " + clean(description) + "\n")
-            print("Ingredients: " + clean(ingredients) + "\n")
-            print("Preparation: " + clean(preparation))
+        for recipe_html in page_recipes:
+            recipe = parse_recipe(recipe_html)
+            print_recipe(recipe)
 
 
-def get_search_url(page_number, page_size):
+# returns a Recipe object parsed from the input html
+def parse_recipe(recipe_html):
+    recipe_url = get_recipe_url(recipe_html)
+    recipe_soup = BeautifulSoup(request.urlopen(recipe_url), "lxml")
+
+    name = recipe_soup.find('div', class_='title-source').find('h1').get_text()
+
+    if recipe_soup.find('div', class_='dek') is not None:
+        description = recipe_soup.find('div', class_='dek').get_text('p')
+    else:
+        description = ""
+
+    ingredients = Ingredients([i.text for i in recipe_soup.find('div', class_='ingredients-info').find_all(
+        'li', itemprop="ingredients")])
+
+    preparation = recipe_soup.find('div', class_='instructions', itemprop='recipeInstructions').find(
+        'li').get_text(separator=" ")
+
+    return Recipe(name, description, ingredients, preparation)
+
+
+def print_recipe(recipe):
+    print(recipe.pretty_out())
+    # print(recipe.tsv_out())
+
+
+# returns the url for the recipe's own page, where the recipe's details are found.
+def get_recipe_url(recipe):
+    recipe_name = recipe.find_all('a')[0].get('href')
+    recipe_link = 'http://www.epicurious.com' + recipe_name
+    return recipe_link
+
+
+# returns a list of recipes (in html form) found in the page_soup
+def get_recipes_in_page(page_soup):
+    page_recipes = [(page_soup.find('div', class_='sr_rows clearfix firstResult'))]
+    rest_of_recipes = page_soup.find_all('div', attrs={"class": 'sr_rows clearfix '})
+    for r in rest_of_recipes:
+        page_recipes.append(r)
+    return page_recipes
+
+
+# returns the url for a page of recipes of size page_size at the given page_index
+def get_page_url(page_index, page_size):
     return 'http://www.epicurious.com/tools/searchresults?search=&pageNumber=' \
-           + str(page_number) + '&pageSize=' + str(page_size) \
-           + '&resultOffset=' + str(page_size * (page_number - 1) + 1)
+           + str(page_index) + '&pageSize=' + str(page_size) \
+           + '&resultOffset=' + str(page_size * (page_index - 1) + 1)
 
 
+# returns the input string with tabs and non-ascii characters removed
 def clean(text):
     text = text.replace('\t', ' ')
     return ''.join(i for i in text if ord(i) < 128)
+
+
+# represents a recipe. ingredients should be of type Ingredients
+class Recipe:
+    def __init__(self, name, description, ingredients, preparation):
+        self.name = name
+        self.description = description
+        self.ingredients = ingredients
+        self.preparation = preparation
+
+    def pretty_out(self):
+        print("Name: " + self.name)
+        print("Description: " + self.description)
+        print("Ingredients: ")
+        for item in self.ingredients.items:
+            print("* " + item)
+        print("Preparation: " + self.preparation)
+        print("----")
+
+    def tsv_out(self):
+        print("\t".join([self.name, self.description, str(self.ingredients), self.preparation]))
+
+
+# represents a list of ingredients
+class Ingredients:
+    def __init__(self, items):
+        self.items = items
+
+    def __str__(self):
+        return "^".join(self.items)
 
 
 if __name__ == "__main__":

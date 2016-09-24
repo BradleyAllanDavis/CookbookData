@@ -35,16 +35,16 @@ def main():
             else:
                 description = "None"
 
-            ingredients = recipe_soup.find('div', class_='ingredients-info').get_text(separator="\n")
+            ingredients = "^".join(i.text for i in recipe_soup.find('div', class_='ingredients-info').find_all(
+                'li', itemprop="ingredients"))
             preparation = recipe_soup.find('div', class_='instructions', itemprop='recipeInstructions').find(
-                'li').get_text(
-                separator="\n")
+                'li').get_text(separator=" ")
 
             print("--------")
-            print("\n" + 'Name: ' + name + "\n")
+            print('Name: ' + name + "\n")
             print("Description: " + clean(description) + "\n")
-            print(clean(ingredients))
-            print("Preparation: " + "\n" + clean(preparation))
+            print("Ingredients: " + clean(ingredients) + "\n")
+            print("Preparation: " + clean(preparation))
 
 
 def get_search_url(page_number, page_size):
@@ -54,9 +54,9 @@ def get_search_url(page_number, page_size):
 
 
 def clean(text):
-    text = ''.join(i for i in text if ord(i) < 128)
-    text.replace('\t', ' ')
-    return text
+    text = text.replace('\t', ' ')
+    return ''.join(i for i in text if ord(i) < 128)
+
 
 if __name__ == "__main__":
     main()

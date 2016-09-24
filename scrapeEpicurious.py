@@ -1,38 +1,26 @@
-# You've been asked to write an app that, given a bunch of search terms,
-# delivers a recipe (name, description, ingredients, and instructions)
-# to the user. You decide that the simplest thing to do is to:
-# 1. ask the user to enter their search terms
-# 2. construct an epicurious url with these search terms
-# 3. get a list of recipes from epicurious
-# 4. pick the first recipe from this list
-# 5. open the recipe page
-# 6. extract the name, description, ingredients and instructions from the recipe page
-# 7. print them out so that the user can see them. 
-
-# For example: spicy cumin burritos; banana strawberry
-
 import urllib.request as ul
 
 from bs4 import BeautifulSoup
 
 
 def main():
-    while True:
-        term = input("Enter a search term or END to exit: ")
-        if term == 'END':
-            exit()
-
-        terms_str = "+".join(term.split())
-        search_link = 'http://www.epicurious.com/tools/searchresults?search=' + terms_str
+    number_of_recipes_to_scrape = 1000
+    page_size = 20
+    page_count = int(number_of_recipes_to_scrape / page_size)
+    for page_number in range(page_count):
+        search_link = get_search_url(page_number, page_size)
         response = ul.urlopen(search_link)
 
-        epicurious_soup = BeautifulSoup(response, 'lxml')
+        page_soup = BeautifulSoup(response, 'lxml')
 
         # first result has class firstResult, the rest don't
-        # all_recipes = epicurious_soup.find('div', class_='sr_rows clearfix firstResult')
-        all_recipes = epicurious_soup.find_all('div', attrs={"class": 'sr_rows clearfix '})
+        page_recipes = [(page_soup.find('div', class_='sr_rows clearfix firstResult'))]
+        rest_of_recipes = page_soup.find_all('div', attrs={"class": 'sr_rows clearfix '})
+        for r in rest_of_recipes:
+            page_recipes.append(r)
 
-        for recipe in all_recipes:
+        print("Found " + str(len(page_recipes)) + " in this page")
+        for recipe in page_recipes:
             # first 'a' has the url suffix
             recipe_name = recipe.find_all('a')[0].get('href')
 
@@ -54,10 +42,21 @@ def main():
 
             print("--------")
             print("\n" + 'Name: ' + name + "\n")
-            print("Description: " + str(description.encode('utf-8')) + "\n")
-            print(str(ingredients.encode('utf-8')))
-            print("Preparation: " + "\n" + str(preparation.encode('utf-8')))
+            print("Description: " + clean(description) + "\n")
+            print(clean(ingredients))
+            print("Preparation: " + "\n" + clean(preparation))
 
+
+def get_search_url(page_number, page_size):
+    return 'http://www.epicurious.com/tools/searchresults?search=&pageNumber=' \
+           + str(page_number) + '&pageSize=' + str(page_size) \
+           + '&resultOffset=' + str(page_size * (page_number - 1) + 1)
+
+
+def clean(text):
+    text = ''.join(i for i in text if ord(i) < 128)
+    text.replace('\t', ' ')
+    return text
 
 if __name__ == "__main__":
     main()

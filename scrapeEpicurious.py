@@ -1,8 +1,8 @@
-from urllib import request
+import requests
 
 from bs4 import BeautifulSoup
 
-number_of_recipes_to_scrape = 1000
+number_of_recipes_to_scrape = 10000
 recipes_per_page = 30  # max seems to be 30
 
 
@@ -11,7 +11,7 @@ def main():
 
     for page_index in range(page_count):
         page_url = get_page_url(page_index, recipes_per_page)
-        page_soup = BeautifulSoup(request.urlopen(page_url), 'lxml')
+        page_soup = BeautifulSoup(requests.get(page_url).text, 'lxml')
         page_recipes = get_recipes_in_page(page_soup)
 
         for recipe_html in page_recipes:
@@ -22,7 +22,7 @@ def main():
 # returns a Recipe object parsed from the input html
 def parse_recipe(recipe_html):
     recipe_url = get_recipe_url(recipe_html)
-    recipe_soup = BeautifulSoup(request.urlopen(recipe_url), "lxml")
+    recipe_soup = BeautifulSoup(requests.get(recipe_url).text, "lxml")
 
     name = recipe_soup.find('div', class_='title-source').find('h1').get_text()
 
@@ -41,8 +41,8 @@ def parse_recipe(recipe_html):
 
 
 def print_recipe(recipe):
-    print(recipe.pretty_out())
-    # print(recipe.tsv_out())
+#    recipe.pretty_out()
+    recipe.tsv_out()
 
 
 # returns the url for the recipe's own page, where the recipe's details are found.
@@ -92,13 +92,16 @@ class Recipe:
         print("----")
 
     def tsv_out(self):
-        print("\t".join([self.name, self.description, str(self.ingredients), self.preparation]))
+        print("\t".join([clean(self.name), clean(self.description), str(self.ingredients), clean(self.preparation)]))
 
 
 # represents a list of ingredients
 class Ingredients:
     def __init__(self, items):
-        self.items = items
+        self.items = []
+	for item in items:
+	    self.items.append(clean(item))
+	
 
     def __str__(self):
         return "^".join(self.items)

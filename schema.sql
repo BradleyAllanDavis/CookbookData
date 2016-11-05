@@ -92,11 +92,12 @@ CREATE TABLE RecipeIngredients (
 	Amount DOUBLE NOT NULL CHECK (Amount > 0),
 	CommonMeasure VARCHAR(128) NOT NULL,
 	CHECK (
-		(IngredientID, CommonMeasure) in (
-			SELECT DISTINCT IngredientID, CommonMeasure
-			FROM GramMappings
+		(IngredientID, CommonMeasure) IN (
+		SELECT DISTINCT IngredientID, CommonMeasure
+		FROM GramMappings
 		)
-	), -- need to make sure we don't disallow recipe ingredients listed in grams,
+		OR CommonMeasure="g"
+	),
 	PRIMARY KEY (RecipeID, IngredientID)
 );
 

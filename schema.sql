@@ -42,8 +42,8 @@ CREATE TABLE FoodGroup (
 
 CREATE TABLE Nutrients (
 	NutrientID INT PRIMARY KEY,
-	Name VARCHAR(128) NOT NULL,
-	Unit VARCHAR(64)
+	Unit VARCHAR(64),
+	Name VARCHAR(128) NOT NULL
 );
 
 CREATE TABLE GramMappings (

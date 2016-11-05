@@ -37,7 +37,6 @@ CREATE TABLE Ingredients (
 CREATE TABLE FoodGroup (
 	FoodGroupID INT PRIMARY KEY,
 	Name VARCHAR(64) NOT NULL,
-	Description VARCHAR(256)
 );
 
 CREATE TABLE Nutrients (
@@ -48,6 +47,7 @@ CREATE TABLE Nutrients (
 
 CREATE TABLE GramMappings (
 	AmountCommonMeasure DOUBLE NOT NULL CHECK (AmountCommonMeasure > 0),
+	SequenceNumber int NOT NULL,
 	CommonMeasure VARCHAR(128) NOT NULL,
 	AmountGrams DOUBLE NOT NULL CHECK (AmountGrams > 0),
 	PRIMARY KEY (IngredientID, AmountCommonMeasure, CommonMeasure)

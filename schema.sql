@@ -31,6 +31,7 @@ CREATE TABLE Tags (
 
 CREATE TABLE Ingredients (
 	IngredientID INT PRIMARY KEY,
+	FOREIGN KEY FoodGroupID REFERENCES FoodGroup(FoodGroupID),
 	Name VARCHAR(64) NOT NULL
 );
 
@@ -110,10 +111,4 @@ CREATE TABLE IngredientNutrients (
 	FOREIGN KEY (NutrientID) REFERENCES Nutrients(NutrientID),
 	Amount DOUBLE NOT NULL CHECK (Amount >= 0),
 	PRIMARY KEY (IngredientID, NutrientID)
-);
-
-CREATE TABLE IngredientFoodGroups (
-	FOREIGN KEY (IngredientID) REFERENCES Ingredients(IngredientID),
-	FOREIGN KEY (FoodGroupID) REFERENCES FoodGroup(FoodGroupID),
-	PRIMARY KEY (IngredientID, FoodGroupID)
 );

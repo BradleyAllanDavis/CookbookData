@@ -102,7 +102,7 @@ class Recipe:
         print("----")
 
     def tsv_out(self):
-        print("\t".join([clean(self.name), clean(self.description), str(self.ingredients), clean(self.preparation), str(self.ingredients)]))
+        print("\t".join([clean(self.name), clean(self.description), str(self.ingredients), clean(self.preparation), str(self.tags)]))
 
 
 # represents a list of ingredients

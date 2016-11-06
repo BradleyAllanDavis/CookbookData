@@ -37,7 +37,13 @@ def parse_recipe(recipe_html):
     preparation = recipe_soup.find('div', class_='instructions', itemprop='recipeInstructions').find(
         'li').get_text(separator=" ")
 
-    return Recipe(name, description, ingredients, preparation)
+    if recipe_soup.find('div', class_='menus-tags content') is not None:
+        if recipe_soup.find('div', class_='menus-tags content').find('dl', class_='tags') is not None:
+            tags = Ingredients([i.text for i in recipe_soup.find('div', class_='menus-tags content').find('dl', class_='tags').find_all('a')])
+    if tags is None:
+        tags = Ingredients([])
+
+    return Recipe(name, description, ingredients, preparation, tags)
 
 
 def print_recipe(recipe):
@@ -76,11 +82,12 @@ def clean(text):
 
 # represents a recipe. ingredients should be of type Ingredients
 class Recipe:
-    def __init__(self, name, description, ingredients, preparation):
+    def __init__(self, name, description, ingredients, preparation, tags):
         self.name = name
         self.description = description
         self.ingredients = ingredients
         self.preparation = preparation
+        self.tags = tags
 
     def pretty_out(self):
         print("Name: " + self.name)
@@ -89,10 +96,13 @@ class Recipe:
         for item in self.ingredients.items:
             print("* " + item)
         print("Preparation: " + self.preparation)
+        print("Tags: ")
+        for item in self.tags.items:
+            print("* " + item)
         print("----")
 
     def tsv_out(self):
-        print("\t".join([clean(self.name), clean(self.description), str(self.ingredients), clean(self.preparation)]))
+        print("\t".join([clean(self.name), clean(self.description), str(self.ingredients), clean(self.preparation), str(self.ingredients)]))
 
 
 # represents a list of ingredients

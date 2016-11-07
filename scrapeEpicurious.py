@@ -109,9 +109,9 @@ class Recipe:
 class Ingredients:
     def __init__(self, items):
         self.items = []
-	for item in items:
-	    self.items.append(clean(item))
-	
+
+        for item in items:
+            self.items.append(clean(item))
 
     def __str__(self):
         return "^".join(self.items)

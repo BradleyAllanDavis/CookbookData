@@ -37,22 +37,22 @@ restrictions.
 
 ### Relational Schema
 
-* User (UserID, Password, FirstName, LastName)
-* SavedSearches (SearchID, UserID, SearchName)
-* Recipes (RecipeID, Title, Description, Instructions, IsPrivate)
-* Tags (TagName, Description)
-* Ingredients (IngredientID, FoodGroupID, Name)
-* FoodGroup (FoodGroupID, Name)
-* Nutrients (NutrientID, Unit, Name)
-* GramMappings (AmountCommonMeasure, SequenceNumber, CommonMeasure, AmountGrams)
-* SearchTags (SearchID, TagName, Include)
-* SearchFoodGroup (SearchID, FoodGroupID, Include)
-* UserFavorites (UserID, RecipeID)
-* UserSubmittedRecipes (UserID, RecipeID)
-* ParentRecipe (ParentRecipeID, ChildRecipeID)
-* RecipeIngredients (RecipeID, IngredientID, Amount, CommonMeasure)
-* RecipeTags (RecipeID, TagName)
-* IngredientNutrients (IngredientID, NutrientID, Amount)
+* User (**UserID**, Password, FirstName, LastName)
+* SavedSearches (**SearchID**, **UserID**, SearchName)
+* Recipes (**RecipeID**, Title, Description, Instructions, IsPrivate)
+* Tags (**TagName**, Description)
+* Ingredients (**IngredientID**, FoodGroupID, Name)
+* FoodGroup (**FoodGroupID**, Name)
+* Nutrients (**NutrientID**, Unit, Name)
+* GramMappings (**IngredientID**, **AmountCommonMeasure**, **CommonMeasure**, SequenceNumber, AmountGrams)
+* SearchTags (**SearchID**, **TagName**, Include)
+* SearchFoodGroup (**SearchID**, **FoodGroupID**, Include)
+* UserFavorites (**UserID**, **RecipeID**)
+* UserSubmittedRecipes (**UserID**, **RecipeID**)
+* ParentRecipe (**ParentRecipeID**, **ChildRecipeID**)
+* RecipeIngredients (**RecipeID**, **IngredientID**, Amount, CommonMeasure)
+* RecipeTags (**RecipeID**, **TagName**)
+* IngredientNutrients (**IngredientID**, **NutrientID**, Amount)
 
 ## Tools
 
@@ -62,3 +62,4 @@ restrictions.
 * Javascript - Front-end
 * Bootstrap - Front-end UI framework
 * Digital Ocean - Virtual Private Server/Web Hosting
+* Git/GitHub - Source code control

@@ -47,9 +47,10 @@ CREATE TABLE Nutrients (
 );
 
 CREATE TABLE GramMappings (
+	FOREIGN KEY (IngredientID) REFERENCES Ingredients(IngredientID),
 	AmountCommonMeasure DOUBLE NOT NULL CHECK (AmountCommonMeasure > 0),
-	SequenceNumber int NOT NULL,
 	CommonMeasure VARCHAR(128) NOT NULL,
+	SequenceNumber int NOT NULL,
 	AmountGrams DOUBLE NOT NULL CHECK (AmountGrams > 0),
 	PRIMARY KEY (IngredientID, AmountCommonMeasure, CommonMeasure)
 );

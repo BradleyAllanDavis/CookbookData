@@ -1,7 +1,7 @@
 CREATE TABLE User (
 	UserID INT PRIMARY KEY,
 	Password VARCHAR(32) NOT NULL
-		CHECK (Password REGEXP '^[[:alnum:]]{6,}$'), 
+		CHECK (Password REGEXP '^[[:alnum:]]{6,}$'),
 	FirstName VARCHAR(32)
 		CHECK (FirstName REGEXP '^[[:alpha:][.apostrophe.][.hyphen.]]+$'), 
 	LastName VARCHAR(32)

@@ -1,18 +1,18 @@
 CREATE TABLE User (
 	UserID INT PRIMARY KEY,
 	Password VARCHAR(32) NOT NULL
-		CHECK (Password REGEXP '^[[:alnum:]]{6,}$'), -- alphanumeric only, weak input sanitization,
+		CHECK (Password REGEXP '^[[:alnum:]]{6,}$'), 
 	FirstName VARCHAR(32)
-		CHECK (FirstName REGEXP '^[[:alpha:][.apostrophe.][.hyphen.]]+$'), -- alpha, apostophe, hyphen allowed,
+		CHECK (FirstName REGEXP '^[[:alpha:][.apostrophe.][.hyphen.]]+$'), 
 	LastName VARCHAR(32)
-		CHECK (LastName REGEXP '^[[:alpha:][.apostrophe.][.hyphen.]]+$'), -- alpha, apostophe, hyphen allowed
+		CHECK (LastName REGEXP '^[[:alpha:][.apostrophe.][.hyphen.]]+$')
 );
 
 CREATE TABLE SavedSearches (
 	SearchID INT,
-	FOREIGN KEY (UserID) REFERENCES User(UserID), -- UserID must exist in User
-	SearchName VARCHAR(64) NOT NULL
-		CHECK (SearchName REGEXP '^[[:alnum:][.space.]]+$'), -- alphanumeric and spaces, need a better way to sanitize here
+	SearchName VARCHAR(64) NOT NULL CHECK (SearchName REGEXP '^[[:alnum:][.space.]]+$'), 
+	UserID INT NOT NULL,
+	FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (SearchID, UserID)
 );
 
@@ -21,7 +21,9 @@ CREATE TABLE Recipes (
 	Title VARCHAR(64) NOT NULL,
 	Description VARCHAR(2048),
 	Instructions VARCHAR(2048),
-	IsPrivate TINYINT
+	IsPrivate TINYINT,
+	ParentRecipeID INT,
+	FOREIGN KEY (ParentRecipeID) REFERENCES Recipes(RecipeID) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE TABLE Tags (
@@ -29,15 +31,16 @@ CREATE TABLE Tags (
 	Description VARCHAR(1024)
 );
 
-CREATE TABLE Ingredients (
-	IngredientID INT PRIMARY KEY,
-	FOREIGN KEY FoodGroupID REFERENCES FoodGroup(FoodGroupID),
+CREATE TABLE FoodGroup (
+	FoodGroupID INT PRIMARY KEY,
 	Name VARCHAR(64) NOT NULL
 );
 
-CREATE TABLE FoodGroup (
-	FoodGroupID INT PRIMARY KEY,
-	Name VARCHAR(64) NOT NULL,
+CREATE TABLE Ingredients (
+	IngredientID INT PRIMARY KEY,
+	FoodGroupID INT NOT NULL,
+	FOREIGN KEY (FoodGroupID) REFERENCES FoodGroup(FoodGroupID),
+	Name VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE Nutrients (
@@ -47,70 +50,78 @@ CREATE TABLE Nutrients (
 );
 
 CREATE TABLE GramMappings (
-	FOREIGN KEY (IngredientID) REFERENCES Ingredients(IngredientID),
+	IngredientID INT NOT NULL,
 	AmountCommonMeasure DOUBLE NOT NULL CHECK (AmountCommonMeasure > 0),
-	CommonMeasure VARCHAR(128) NOT NULL,
 	SequenceNumber int NOT NULL,
+	CommonMeasure VARCHAR(128) NOT NULL,
 	AmountGrams DOUBLE NOT NULL CHECK (AmountGrams > 0),
 	PRIMARY KEY (IngredientID, AmountCommonMeasure, CommonMeasure)
 );
 
 CREATE TABLE SearchTags (
-	FOREIGN KEY (SearchID) REFERENCES SavedSearches(SearchID),
-	FOREIGN KEY (TagName) REFERENCES Tag(TagName),
+	SearchID INT NOT NULL,
+	TagName VARCHAR(64) NOT NULL,
+	FOREIGN KEY (SearchID) REFERENCES SavedSearches(SearchID) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (TagName) REFERENCES Tags(TagName) ON DELETE CASCADE ON UPDATE CASCADE,
 	Include TINYINT NOT NULL,
 	PRIMARY KEY (SearchID, TagName)
 );
 
 CREATE TABLE SearchFoodGroup (
-	FOREIGN KEY (SearchID) REFERENCES SavedSearches(SearchID),
-	FOREIGN KEY FoodGroupID REFERENCES FoodGroup(FoodGroupID),
+	SearchID INT NOT NULL,
+	FoodGroupID INT NOT NULL,
+	FOREIGN KEY (SearchID) REFERENCES SavedSearches(SearchID) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (FoodGroupID) REFERENCES FoodGroup(FoodGroupID) ON DELETE CASCADE ON UPDATE CASCADE,
 	Include TINYINT NOT NULL,
 	PRIMARY KEY (SearchID, FoodGroupID)
 );
 
 CREATE TABLE UserFavorites (
-	FOREIGN KEY (UserID) REFERENCES User(UserID),
-	FOREIGN KEY (RecipeID) REFERENCES Recipes(RecipeID),
+	UserID INT NOT NULL,
+	RecipeID INT NOT NULL,
+	FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (RecipeID) REFERENCES Recipes(RecipeID) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (UserID, RecipeID)
 );
 
 CREATE TABLE UserSubmittedRecipes (
-	FOREIGN KEY (UserID) REFERENCES User(UserID),
-	FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID),
+	UserID INT NOT NULL,
+	RecipeID INT NOT NULL,
+	FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (RecipeID) REFERENCES Recipes(RecipeID) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (UserID, RecipeID)
 );
 
-CREATE TABLE ParentRecipe (
-	FOREIGN KEY (ParentRecipeID) REFERENCES Recipe(RecipeID),
-	FOREIGN KEY (ChildRecipeID) REFERENCES Recipe(RecipeID),
-	PRIMARY KEY (ParentRecipeID, ChildRecipeID)
-);
-
 CREATE TABLE RecipeIngredients (
-	FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID),
-	FOREIGN KEY (IngredientID) REFERENCES Ingredients(IngredientID),
+	RecipeID INT NOT NULL,
+	IngredientID INT NOT NULL,
+	FOREIGN KEY (RecipeID) REFERENCES Recipes(RecipeID) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (IngredientID) REFERENCES Ingredients(IngredientID) ON DELETE CASCADE ON UPDATE CASCADE,
 	Amount DOUBLE NOT NULL CHECK (Amount > 0),
-	CommonMeasure VARCHAR(128) NOT NULL,
+	Unit VARCHAR(128) NOT NULL,
 	CHECK (
-		(IngredientID, CommonMeasure) IN (
+		(IngredientID, Unit) IN (
 		SELECT DISTINCT IngredientID, CommonMeasure
 		FROM GramMappings
 		)
-		OR CommonMeasure="g"
+		OR Unit="g"
 	),
 	PRIMARY KEY (RecipeID, IngredientID)
 );
 
 CREATE TABLE RecipeTags (
-	FOREIGN KEY (RecipeID) REFERENCES Recipe(RecipeID),
-	FOREIGN KEY (TagName) REFERENCES Tag(TagName),
+	RecipeID INT NOT NULL,
+	TagName VARCHAR(64) NOT NULL,
+	FOREIGN KEY (RecipeID) REFERENCES Recipes(RecipeID) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (TagName) REFERENCES Tags(TagName) ON DELETE CASCADE ON UPDATE CASCADE,
 	PRIMARY KEY (RecipeID, TagName)
 );
 
 CREATE TABLE IngredientNutrients (
-	FOREIGN KEY (IngredientID) REFERENCES Ingredients(IngredientID),
-	FOREIGN KEY (NutrientID) REFERENCES Nutrients(NutrientID),
+	IngredientID INT NOT NULL,
+	NutrientID INT NOT NULL,
+	FOREIGN KEY (IngredientID) REFERENCES Ingredients(IngredientID) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (NutrientID) REFERENCES Nutrients(NutrientID) ON DELETE CASCADE ON UPDATE CASCADE,
 	Amount DOUBLE NOT NULL CHECK (Amount >= 0),
 	PRIMARY KEY (IngredientID, NutrientID)
 );

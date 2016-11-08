@@ -1,4 +1,4 @@
-CREATE TABLE User (
+CREATE TABLE Users (
 	UserID INT PRIMARY KEY,
 	Password VARCHAR(32) NOT NULL
 		CHECK (Password REGEXP '^[[:alnum:]]{6,}$'),
@@ -27,11 +27,10 @@ CREATE TABLE Recipes (
 );
 
 CREATE TABLE Tags (
-	TagName VARCHAR(64) PRIMARY KEY,
-	Description VARCHAR(1024)
+	TagName VARCHAR(64) PRIMARY KEY
 );
 
-CREATE TABLE FoodGroup (
+CREATE TABLE FoodGroups (
 	FoodGroupID INT PRIMARY KEY,
 	Name VARCHAR(64) NOT NULL
 );
@@ -67,7 +66,7 @@ CREATE TABLE SearchTags (
 	PRIMARY KEY (SearchID, TagName)
 );
 
-CREATE TABLE SearchFoodGroup (
+CREATE TABLE SearchFoodGroups (
 	SearchID INT NOT NULL,
 	FoodGroupID INT NOT NULL,
 	FOREIGN KEY (SearchID) REFERENCES SavedSearches(SearchID) ON DELETE CASCADE ON UPDATE CASCADE,

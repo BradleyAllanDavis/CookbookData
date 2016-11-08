@@ -51,8 +51,8 @@ CREATE TABLE Nutrients (
 
 CREATE TABLE GramMappings (
 	IngredientID INT NOT NULL,
-	AmountCommonMeasure DOUBLE NOT NULL CHECK (AmountCommonMeasure > 0),
 	SequenceNumber int NOT NULL,
+	AmountCommonMeasure DOUBLE NOT NULL CHECK (AmountCommonMeasure > 0),
 	CommonMeasure VARCHAR(128) NOT NULL,
 	AmountGrams DOUBLE NOT NULL CHECK (AmountGrams > 0),
 	PRIMARY KEY (IngredientID, AmountCommonMeasure, CommonMeasure)

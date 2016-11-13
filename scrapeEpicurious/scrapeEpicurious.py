@@ -7,17 +7,57 @@ recipes_per_page = 30  # max seems to be 30
 
 
 def main():
-    page_count = int(number_of_recipes_to_scrape / recipes_per_page)
 
-    for page_index in range(page_count):
-        page_url = get_page_url(page_index, recipes_per_page)
-        page_soup = BeautifulSoup(requests.get(page_url).text, 'lxml')
-        page_recipes = get_recipes_in_page(page_soup)
+    ingredients = build_ingredients_dict()
 
-        for recipe_html in page_recipes:
-            recipe = parse_recipe(recipe_html)
-            print_recipe(recipe)
+    for ingredient in ingredients:
+        print(ingredient)
+        for ingredient_obj in ingredients[ingredient]:
+            print(ingredient_obj.description)
+        print()
 
+    # for page_index in range(page_count):
+    #     page_url = get_page_url(page_index, recipes_per_page)
+    #     page_soup = BeautifulSoup(requests.get(page_url).text, 'lxml')
+    #     page_recipes = get_recipes_in_page(page_soup)
+
+    #     for recipe_html in page_recipes:
+    #         recipe = parse_recipe(recipe_html)
+    #         print_recipe(recipe)
+
+# Build data structure for USDA ingredients
+def build_ingredients_dict():
+
+    ingredients = { 'Bradley' : [] }
+
+    with open('ingredients.tsv', 'r') as infile:
+        for line in infile:
+            line_array = line.split('\t')
+
+            ingredient_id = line_array[0]
+            food_group = line_array[1]
+
+            ingredient_and_description = line_array[2]
+            ingredient_and_description_array = ingredient_and_description.strip().split(',', 1)
+
+            ingredient = ingredient_and_description_array[0]
+            if len(ingredient_and_description_array) > 1:
+                description = ingredient_and_description_array[1]
+            else:
+                description = None
+
+            # ingredient = ingredient_and_description_array[0]
+
+            ingredient_obj = Ingredient(ingredient_id, food_group, ingredient, description)
+
+            if ingredient_obj.ingredient in ingredients.keys():
+                list_of_ingredients = ingredients[ingredient_obj.ingredient]
+                list_of_ingredients.append(ingredient_obj)
+                ingredients[ingredient_obj.ingredient] = list_of_ingredients
+            else:
+                ingredients[ingredient_obj.ingredient] = [ingredient_obj]
+
+    return ingredients
 
 # returns a Recipe object parsed from the input html
 def parse_recipe(recipe_html):
@@ -31,12 +71,11 @@ def parse_recipe(recipe_html):
     else:
         description = ""
 
-    ingredients = Ingredients([i.text for i in recipe_soup.find('div', class_='ingredients-info').find_all(
-        'li', itemprop="ingredients")])
+    ingredients = Ingredients([i.text for i in recipe_soup.find('div', class_='ingredients-info').find_all('li', itemprop="ingredients")])
 
-    preparation = recipe_soup.find('div', class_='instructions', itemprop='recipeInstructions').find(
-        'li').get_text(separator=" ")
+    preparation = recipe_soup.find('div', class_='instructions', itemprop='recipeInstructions').find('li').get_text(separator=" ")
 
+    tags = None;
     if recipe_soup.find('div', class_='menus-tags content') is not None:
         if recipe_soup.find('div', class_='menus-tags content').find('dl', class_='tags') is not None:
             tags = Ingredients([i.text for i in recipe_soup.find('div', class_='menus-tags content').find('dl', class_='tags').find_all('a')])
@@ -77,7 +116,26 @@ def get_page_url(page_index, page_size):
 # returns the input string with tabs and non-ascii characters removed
 def clean(text):
     text = text.replace('\t', ' ')
+    text = text.replace('\r', '\n')
+
+    line_array = text.split("\n")
+
+    line_array = [" ".join(line.strip().split()) for line in line_array ]
+
+    text = "@newline@".join(line_array)
+
+    # text = text.replace('\r', '@carriage@')
+    # text = text.replace('\n', '@newline@')
+
     return ''.join(i for i in text if ord(i) < 128)
+
+
+class Ingredient:
+    def __init__(self, ingredient_id, food_group, ingredient, description):
+        self.ingredient_id = ingredient_id
+        self.food_group = food_group
+        self.ingredient = ingredient
+        self.description = description
 
 
 # represents a recipe. ingredients should be of type Ingredients

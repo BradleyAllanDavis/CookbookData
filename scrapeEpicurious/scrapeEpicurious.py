@@ -46,8 +46,6 @@ def build_ingredients_dict():
             else:
                 description = None
 
-            # ingredient = ingredient_and_description_array[0]
-
             ingredient_obj = Ingredient(ingredient_id, food_group, ingredient, description)
 
             if ingredient_obj.ingredient in ingredients.keys():

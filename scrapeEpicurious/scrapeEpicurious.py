@@ -8,22 +8,21 @@ recipes_per_page = 30  # max seems to be 30
 
 def main():
 
-    ingredients = build_ingredients_dict()
+    # ingredients = build_ingredients_dict()
+    # print_ingredients(ingredients)
 
-    for ingredient in ingredients:
-        print(ingredient)
-        for ingredient_obj in ingredients[ingredient]:
-            print(ingredient_obj.description)
-        print()
 
-    # for page_index in range(page_count):
-    #     page_url = get_page_url(page_index, recipes_per_page)
-    #     page_soup = BeautifulSoup(requests.get(page_url).text, 'lxml')
-    #     page_recipes = get_recipes_in_page(page_soup)
+    page_count = int(number_of_recipes_to_scrape / recipes_per_page)
 
-    #     for recipe_html in page_recipes:
-    #         recipe = parse_recipe(recipe_html)
-    #         print_recipe(recipe)
+    for page_index in range(page_count):
+        page_url = get_page_url(page_index, recipes_per_page)
+        page_soup = BeautifulSoup(requests.get(page_url).text, 'lxml')
+        page_recipes = get_recipes_in_page(page_soup)
+
+        for recipe_html in page_recipes:
+            recipe = parse_recipe(recipe_html)
+            print_recipe(recipe)
+
 
 # Build data structure for USDA ingredients
 def build_ingredients_dict():
@@ -56,6 +55,20 @@ def build_ingredients_dict():
                 ingredients[ingredient_obj.ingredient] = [ingredient_obj]
 
     return ingredients
+
+
+# Print ingredients in structure
+def print_ingredients(ingredients):
+
+    for ingredient in ingredients:
+        print(ingredient)
+        for ingredient_obj in ingredients[ingredient]:
+            if ingredient_obj.description:
+                print(ingredient_obj.ingredient_id + ' ' + ingredient_obj.food_group + ' ' + ingredient_obj.description)
+            else:
+                print(ingredient_obj.ingredient_id + ' ' + ingredient_obj.food_group + ' ' + ingredient)
+        print()
+
 
 # returns a Recipe object parsed from the input html
 def parse_recipe(recipe_html):

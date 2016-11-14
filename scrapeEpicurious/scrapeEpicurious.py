@@ -9,7 +9,7 @@ recipes_per_page = 30  # max seems to be 30
 def main():
 
     # ingredients = build_ingredients_dict()
-    # print_ingredients(ingredients)
+    # print_ingredients_dict(ingredients)
 
 
     page_count = int(number_of_recipes_to_scrape / recipes_per_page)
@@ -27,7 +27,7 @@ def main():
 # Build data structure for USDA ingredients
 def build_ingredients_dict():
 
-    ingredients = { 'Bradley' : [] }
+    ingredients = {}
 
     with open('ingredients.tsv', 'r') as infile:
         for line in infile:
@@ -58,7 +58,7 @@ def build_ingredients_dict():
 
 
 # Print ingredients in structure
-def print_ingredients(ingredients):
+def print_ingredients_dict(ingredients):
 
     for ingredient in ingredients:
         print(ingredient)
@@ -84,7 +84,9 @@ def parse_recipe(recipe_html):
 
     ingredients = Ingredients([i.text for i in recipe_soup.find('div', class_='ingredients-info').find_all('li', itemprop="ingredients")])
 
-    preparation = recipe_soup.find('div', class_='instructions', itemprop='recipeInstructions').find('li').get_text(separator=" ")
+    preparation = recipe_soup.find('div', class_='instructions', itemprop='recipeInstructions')
+    if preparation != None:
+        preparation = preparation.find('li').get_text(separator=" ")
 
     tags = None;
     if recipe_soup.find('div', class_='menus-tags content') is not None:
@@ -97,8 +99,8 @@ def parse_recipe(recipe_html):
 
 
 def print_recipe(recipe):
-#    recipe.pretty_out()
     recipe.tsv_out()
+    # recipe.pretty_out()
 
 
 # returns the url for the recipe's own page, where the recipe's details are found.
@@ -129,14 +131,10 @@ def clean(text):
     text = text.replace('\t', ' ')
     text = text.replace('\r', '\n')
 
+    # Strip whitespace list/array around new lines, replaces with @newline@ token
     line_array = text.split("\n")
-
-    line_array = [" ".join(line.strip().split()) for line in line_array ]
-
+    line_array = [" ".join(line.strip().split()) for line in line_array]
     text = "@newline@".join(line_array)
-
-    # text = text.replace('\r', '@carriage@')
-    # text = text.replace('\n', '@newline@')
 
     return ''.join(i for i in text if ord(i) < 128)
 
@@ -159,16 +157,16 @@ class Recipe:
         self.tags = tags
 
     def pretty_out(self):
-        print("Name: " + self.name)
+        print("Name:        " + self.name)
         print("Description: " + self.description)
         print("Ingredients: ")
         for item in self.ingredients.items:
             print("* " + item)
-        print("Preparation: " + self.preparation)
-        print("Tags: ")
+        print("Preparation: " + self.preparation.strip())
+        print("Tags:        ")
         for item in self.tags.items:
             print("* " + item)
-        print("----")
+        print()
 
     def tsv_out(self):
         print("\t".join([clean(self.name), clean(self.description), str(self.ingredients), clean(self.preparation), str(self.tags)]))

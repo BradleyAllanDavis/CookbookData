@@ -53,6 +53,7 @@ restrictions.
 * RecipeIngredients (**RecipeID**, **IngredientID**, Amount, CommonMeasure)
 * RecipeTags (**RecipeID**, **TagName**)
 * IngredientNutrients (**IngredientID**, **NutrientID**, Amount)
+* LoggedInUsers (**UserID**)
 
 ## Tools
 

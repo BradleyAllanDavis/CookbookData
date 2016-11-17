@@ -124,3 +124,9 @@ CREATE TABLE IngredientNutrients (
 	Amount DOUBLE NOT NULL CHECK (Amount >= 0),
 	PRIMARY KEY (IngredientID, NutrientID)
 );
+
+CREATE TABLE LoggedInUsers (
+	UserID INT NOT NULL,
+	FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE ON UPDATE CASCADE,
+	PRIMARY KEY (UserID)
+);

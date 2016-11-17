@@ -1,4 +1,4 @@
-CREATE TABLE Users (
+CREATE TABLE User (
 	UserID INT PRIMARY KEY,
 	Password VARCHAR(32) NOT NULL
 		CHECK (Password REGEXP '^[[:alnum:]]{6,}$'),
@@ -30,7 +30,7 @@ CREATE TABLE Tags (
 	TagName VARCHAR(64) PRIMARY KEY
 );
 
-CREATE TABLE FoodGroups (
+CREATE TABLE FoodGroup (
 	FoodGroupID INT PRIMARY KEY,
 	Name VARCHAR(64) NOT NULL
 );
@@ -39,7 +39,7 @@ CREATE TABLE Ingredients (
 	IngredientID INT PRIMARY KEY,
 	FoodGroupID INT NOT NULL,
 	FOREIGN KEY (FoodGroupID) REFERENCES FoodGroup(FoodGroupID),
-	Name VARCHAR(64) NOT NULL
+	Name VARCHAR(256) NOT NULL
 );
 
 CREATE TABLE Nutrients (

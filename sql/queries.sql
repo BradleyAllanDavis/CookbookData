@@ -1,20 +1,14 @@
-INSERT INTO Recipes values(1,"Hannah's test recipe", "User added recipe", "Take bread, and put the butter on it", 0, NULL);
-INSERT INTO RecipeIngredients values(1,18060,1,"oz");
-INSERT INTO RecipeIngredients value(1,01145,12.231,"g");
+CREATE VIEW CommonMeasureNutrients AS
+SELECT gm.IngredientID, CommonMeasure, Amount/100*AmountGrams*AmountCommonMeasure AS "Nutrient per each", n.NutrientID
+FROM Nutrients n, IngredientNutrients inn, GramMappings gm
+WHERE inn.IngredientID = gm.IngredientID
+AND n.NutrientID=inn.NutrientID;
 
 CREATE VIEW RecipeListing as SELECT r.RecipeID, i.IngredientID, Title, Name, Amount, Unit
 FROM Recipes r, Ingredients i, RecipeIngredients ri
 WHERE i.IngredientID = ri.IngredientID
-AND r.RecipeID = ri.RecipeID
-AND r.RecipeID = 1;
+AND r.RecipeID = ri.RecipeID;
 
-CREATE VIEW CommonMeasureCalories AS
-SELECT gm.IngredientID, CommonMeasure, Amount/100*AmountGrams*AmountCommonMeasure AS "kcal per CommonMeasure"
-FROM Nutrients n, IngredientNutrients inn, GramMappings gm
-WHERE inn.IngredientID = gm.IngredientID
-AND n.NutrientID=inn.NutrientID
-AND n.name="Energy"
-AND n.Unit="kcal";
 
 CREATE VIEW IngredientsInGrams AS
 SELECT r.RecipeID, r.IngredientID, Name, Amount, Unit, AmountGrams/AmountCommonMeasure*Amount AS inGrams
@@ -26,11 +20,15 @@ SELECT r.RecipeID, r.IngredientID, Name, Amount, Unit, Amount
 FROM RecipeListing r
 WHERE r.Unit = "g";
 
-CREATE VIEW RecipeListingWithCalories AS
-SELECT RecipeID, ig.IngredientID, Name, ig.Amount, Unit, n.Amount/100*inGrams as "kcal"
+
+CREATE VIEW RecipeListingWithNutrient AS
+SELECT RecipeID, ig.IngredientID, Name, ig.Amount, Unit, n.Amount/100*inGrams as NutrientAmount, n.NutrientID
 FROM IngredientsInGrams ig, IngredientNutrients n
-WHERE ig.IngredientID=n.IngredientID
-AND n.NutrientID=208;
+WHERE ig.IngredientID = n.IngredientID;
+
+
+SELECT RecipeID, sum(NutrientAmount) FROM RecipeListingWithNutrient WHERE NutrientID = SpecifiedNutrientID AND RecipeID = SpecifiedRecipeID GROUP BY RecipeID;
+
 
 SELECT Title, i.Name, ri.Amount, ri.Unit, AmountGrams
 FROM Recipes r, Ingredients i, RecipeIngredients ri, Nutrients n, IngredientNutrients inn, GramMappings gm

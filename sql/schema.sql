@@ -54,7 +54,7 @@ CREATE TABLE GramMappings (
 	AmountCommonMeasure DOUBLE NOT NULL CHECK (AmountCommonMeasure > 0),
 	CommonMeasure VARCHAR(128) NOT NULL,
 	AmountGrams DOUBLE NOT NULL CHECK (AmountGrams > 0),
-	PRIMARY KEY (IngredientID, AmountCommonMeasure, CommonMeasure)
+	PRIMARY KEY (IngredientID, SequenceNumber)
 );
 
 CREATE TABLE SearchTags (

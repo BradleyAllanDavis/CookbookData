@@ -101,7 +101,6 @@ def ingredMapReplace(recipe,usdaIngredList,gramMapList):
                 numChoices = len(gramMapList.gramMapDict[usdaIngred['ID']])
                 gramMap = gramMapList.gramMapDict[usdaIngred['ID']][random.randint(0,numChoices-1)]
                 print(usdaIngred,gramMap)
-    
 
 
 if __name__ == "__main__":

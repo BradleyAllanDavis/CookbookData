@@ -2,13 +2,13 @@ from grammapping import GramMapping
 
 class GramMappingList:
     __infilename = 'weight.tsv'
-    
+
     def __init__(self):
         self.gramMapDict = {}
         self.buildGramMapping()
 
     def buildGramMapping(self):
-        with open(self.__infilename,'r') as infile:
+        with open(self.__infilename,'r', encoding='utf-8', errors='ignore') as infile:
             for line in infile:
                 lineArr = line.split('\t')
 

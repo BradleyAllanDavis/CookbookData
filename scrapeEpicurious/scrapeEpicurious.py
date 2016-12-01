@@ -33,10 +33,10 @@ def main():
 
         for recipe_html in page_recipes:
             recipe = parse_recipe(recipe_html)
-            replaced_ingredients_with_gram_mappings = ingredMapReplace(recipe, usdaIngredList, gramMapList)
+            replaced_ingredients_with_gram_map = ingredMapReplace(recipe, usdaIngredList, gramMapList)
 
             print_recipe(recipe)
-            print_ingredients_and_gram_map(replaced_ingredients_with_gram_mappings)
+            print_ingredients_and_gram_map(replaced_ingredients_with_gram_map)
 
 
 # returns a Recipe object parsed from the input html
@@ -123,8 +123,8 @@ def ingredMapReplace(recipe, usdaIngredList, gramMapList):
     return replaced_ingredients_with_gram_mappings
 
 
-def print_ingredients_and_gram_map(ingredient_and_gram_map):
-    for ingredient_and_gram_map in ingredient_and_gram_map:
+def print_ingredients_and_gram_map(ingredients_and_gram_map):
+    for ingredient_and_gram_map in ingredients_and_gram_map:
         usda_ingred, gram_map = ingredient_and_gram_map
         print(usda_ingred.ingredientName)
         print(gram_map)

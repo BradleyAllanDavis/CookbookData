@@ -18,7 +18,7 @@ class GramMappingList:
                 unit = lineArr[3].strip()
                 grams = lineArr[4].strip()
 
-                gramMap = GramMapping(ingredientID,amount,unit,grams)
+                gramMap = GramMapping(ingredientID, amount, unit, grams)
 
                 if gramMap.ingredientID in self.gramMapDict.keys():
                     tempList = self.gramMapDict[gramMap.ingredientID]

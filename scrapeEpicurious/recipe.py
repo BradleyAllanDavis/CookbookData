@@ -21,7 +21,11 @@ class Recipe:
         print()
 
     def tsv_out(self):
-        print("\t".join([self.clean(self.name), self.clean(self.description), str(self.ingredients), self.clean(self.preparation), str(self.tags)]))
+        print("\t".join([self.clean(self.name),
+                         self.clean(self.description),
+                         str(self.ingredients),
+                         self.clean(self.preparation),
+                         str(self.tags)]))
 
     # returns the input string with tabs and non-ascii characters removed
     def clean(self,text):

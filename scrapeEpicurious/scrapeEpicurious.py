@@ -1,3 +1,12 @@
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+from usdaingredientlist import UsdaIngredientList
+from grammappinglist import GramMappingList
+from recipe import Recipe
+from ingredientlist import Ingredients
+import random
+import re
+
 import requests
 
 from bs4 import BeautifulSoup
@@ -5,75 +14,35 @@ from bs4 import BeautifulSoup
 number_of_recipes_to_scrape = 10000
 recipes_per_page = 30  # max seems to be 30
 
-
+# create output file from web scrape of epicurious by matching ingredients
+# from recipes there to the usda standard reference as best we can
 def main():
 
-    # ingredients = build_ingredients_dict()
-    # print_ingredients_dict(ingredients)
+    usdaIngredList = UsdaIngredientList()
+    # usdaIngredList.printOut()
 
+    gramMapList = GramMappingList()
+    # gramMapList.printOut()
 
     page_count = int(number_of_recipes_to_scrape / recipes_per_page)
 
     for page_index in range(page_count):
         page_url = get_page_url(page_index, recipes_per_page)
-        page_soup = BeautifulSoup(requests.get(page_url).text, 'lxml')
+        page_soup = BeautifulSoup(requests.get(page_url).text, 'html5lib')
         page_recipes = get_recipes_in_page(page_soup)
 
         for recipe_html in page_recipes:
             recipe = parse_recipe(recipe_html)
+            replaced_ingredients_with_gram_mappings = ingredMapReplace(recipe, usdaIngredList, gramMapList)
+
             print_recipe(recipe)
-
-
-# Build data structure for USDA ingredients
-def build_ingredients_dict():
-
-    ingredients = {}
-
-    with open('ingredients.tsv', 'r') as infile:
-        for line in infile:
-            line_array = line.split('\t')
-
-            ingredient_id = line_array[0]
-            food_group = line_array[1]
-
-            ingredient_and_description = line_array[2]
-            ingredient_and_description_array = ingredient_and_description.strip().split(',', 1)
-
-            ingredient = ingredient_and_description_array[0]
-            if len(ingredient_and_description_array) > 1:
-                description = ingredient_and_description_array[1]
-            else:
-                description = None
-
-            ingredient_obj = Ingredient(ingredient_id, food_group, ingredient, description)
-
-            if ingredient_obj.ingredient in ingredients.keys():
-                list_of_ingredients = ingredients[ingredient_obj.ingredient]
-                list_of_ingredients.append(ingredient_obj)
-                ingredients[ingredient_obj.ingredient] = list_of_ingredients
-            else:
-                ingredients[ingredient_obj.ingredient] = [ingredient_obj]
-
-    return ingredients
-
-
-# Print ingredients in structure
-def print_ingredients_dict(ingredients):
-
-    for ingredient in ingredients:
-        print(ingredient)
-        for ingredient_obj in ingredients[ingredient]:
-            if ingredient_obj.description:
-                print(ingredient_obj.ingredient_id + ' ' + ingredient_obj.food_group + ' ' + ingredient_obj.description)
-            else:
-                print(ingredient_obj.ingredient_id + ' ' + ingredient_obj.food_group + ' ' + ingredient)
-        print()
+            print_ingredients_and_gram_map(replaced_ingredients_with_gram_mappings)
 
 
 # returns a Recipe object parsed from the input html
 def parse_recipe(recipe_html):
     recipe_url = get_recipe_url(recipe_html)
-    recipe_soup = BeautifulSoup(requests.get(recipe_url).text, "lxml")
+    recipe_soup = BeautifulSoup(requests.get(recipe_url).text, "html5lib")
 
     name = recipe_soup.find('div', class_='title-source').find('h1').get_text()
 
@@ -96,11 +65,6 @@ def parse_recipe(recipe_html):
         tags = Ingredients([])
 
     return Recipe(name, description, ingredients, preparation, tags)
-
-
-def print_recipe(recipe):
-    recipe.tsv_out()
-    # recipe.pretty_out()
 
 
 # returns the url for the recipe's own page, where the recipe's details are found.
@@ -126,62 +90,50 @@ def get_page_url(page_index, page_size):
            + '&resultOffset=' + str(page_size * (page_index - 1) + 1)
 
 
-# returns the input string with tabs and non-ascii characters removed
-def clean(text):
-    text = text.replace('\t', ' ')
-    text = text.replace('\r', '\n')
+# performs fuzzy matching on recipe ingredients and selects a random gram mapping
+# for each ingredient
+random.seed(564)
+def ingredMapReplace(recipe, usdaIngredList, gramMapList):
+    replaced_ingredients_with_gram_mappings = []
 
-    # Strip whitespace list/array around new lines, replaces with @newline@ token
-    line_array = text.split("\n")
-    line_array = [" ".join(line.strip().split()) for line in line_array]
-    text = "@newline@".join(line_array)
+    for recipe_ingredient in recipe.ingredients.items:
 
-    return ''.join(i for i in text if ord(i) < 128)
+        # NOTE: random.choice needs a list
+        # fuzzy match recipe ingredient to usda ingredient
+        ingredient_match = process.extractOne(recipe_ingredient, usdaIngredList.ingredDict.keys(), scorer=fuzz.partial_ratio)
+        ingred = ingredient_match[0]
+
+        # randomly select one of the usda foods with that name
+        usdaIngred = random.choice(usdaIngredList.ingredDict[ingred])
+
+        # randomly select one of the gram mappings associated with that food
+        # it appears there are some food where there is no gram mapping
+        # in that case, pick random gram mapping
+        if usdaIngred.id in gramMapList.gramMapDict:
+            gramMap = random.choice(gramMapList.gramMapDict[usdaIngred.id])
+        else:
+            rand_ingred = random.choice(list(gramMapList.gramMapDict.keys()))
+            gramMap = random.choice(list(gramMapList.gramMapDict.keys()))
+
+        ingredient_and_gram_map = (usdaIngred, gramMap)
+
+        # build list of matched ingredients with gram mappings
+        replaced_ingredients_with_gram_mappings.append(ingredient_and_gram_map)
+
+    return replaced_ingredients_with_gram_mappings
 
 
-class Ingredient:
-    def __init__(self, ingredient_id, food_group, ingredient, description):
-        self.ingredient_id = ingredient_id
-        self.food_group = food_group
-        self.ingredient = ingredient
-        self.description = description
-
-
-# represents a recipe. ingredients should be of type Ingredients
-class Recipe:
-    def __init__(self, name, description, ingredients, preparation, tags):
-        self.name = name
-        self.description = description
-        self.ingredients = ingredients
-        self.preparation = preparation
-        self.tags = tags
-
-    def pretty_out(self):
-        print("Name:        " + self.name)
-        print("Description: " + self.description)
-        print("Ingredients: ")
-        for item in self.ingredients.items:
-            print("* " + item)
-        print("Preparation: " + self.preparation.strip())
-        print("Tags:        ")
-        for item in self.tags.items:
-            print("* " + item)
+def print_ingredients_and_gram_map(ingredient_and_gram_map):
+    for ingredient_and_gram_map in ingredient_and_gram_map:
+        usda_ingred, gram_map = ingredient_and_gram_map
+        print(usda_ingred.ingredientName)
+        print(gram_map)
         print()
 
-    def tsv_out(self):
-        print("\t".join([clean(self.name), clean(self.description), str(self.ingredients), clean(self.preparation), str(self.tags)]))
 
-
-# represents a list of ingredients
-class Ingredients:
-    def __init__(self, items):
-        self.items = []
-
-        for item in items:
-            self.items.append(clean(item))
-
-    def __str__(self):
-        return "^".join(self.items)
+def print_recipe(recipe):
+    recipe.tsv_out()
+    # recipe.pretty_out()
 
 
 if __name__ == "__main__":

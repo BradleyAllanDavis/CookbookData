@@ -1,7 +1,7 @@
 from usdaingredient import UsdaIngredient
 
 class UsdaIngredientList:
-    __infilename = 'ingredients.tsv'
+    __infilename = 'usda/ingredients.tsv'
 
     def __init__(self):
         self.ingredDict = {}

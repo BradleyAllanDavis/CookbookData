@@ -33,7 +33,7 @@ def main():
 
         for recipe_html in page_recipes:
             recipe = parse_recipe(recipe_html)
-            replaced_ingredients_with_gram_map = ingredMapReplace(recipe, usdaIngredList, gramMapList)
+            replaced_ingredients_with_gram_map = map_recipe_to_usda(recipe, usdaIngredList, gramMapList)
 
             print_recipe(recipe)
             print_ingredients_and_gram_map(replaced_ingredients_with_gram_map)
@@ -93,7 +93,7 @@ def get_page_url(page_index, page_size):
 # performs fuzzy matching on recipe ingredients and selects a random gram mapping
 # for each ingredient
 random.seed(564)
-def ingredMapReplace(recipe, usdaIngredList, gramMapList):
+def map_recipe_to_usda(recipe, usdaIngredList, gramMapList):
     replaced_ingredients_with_gram_mappings = []
 
     for recipe_ingredient in recipe.ingredients.items:

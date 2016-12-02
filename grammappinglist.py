@@ -1,7 +1,7 @@
 from grammapping import GramMapping
 
 class GramMappingList:
-    __infilename = 'weight.tsv'
+    __infilename = 'usda/weight.tsv'
 
     def __init__(self):
         self.gramMapDict = {}

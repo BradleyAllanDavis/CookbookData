@@ -40,7 +40,7 @@ restrictions.
 * User (**UserID**, Password, FirstName, LastName)
 * SavedSearches (**SearchID**, **UserID**, SearchName)
 * Recipes (**RecipeID**, Title, Description, Instructions, IsPrivate)
-* Tags (**TagName**, Description)
+* Tags (**TagName**)
 * Ingredients (**IngredientID**, FoodGroupID, Name)
 * FoodGroup (**FoodGroupID**, Name)
 * Nutrients (**NutrientID**, Unit, Name)

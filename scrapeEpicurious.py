@@ -161,7 +161,7 @@ def print_recipe(recipe):
     # recipe.pretty_out()
 
 def out_recipes(_outfile, recipe, recipe_id_counter):
-    with open(_outfile,'a', encoding='utf-8', errors='ignore') as outfile:
+    with open(_outfile,'a') as outfile:
         outfile.write("\t".join([str(recipe_id_counter),
                                  recipe.clean(recipe.name),
                                  recipe.clean(recipe.description),
@@ -170,7 +170,7 @@ def out_recipes(_outfile, recipe, recipe_id_counter):
 
 
 def out_recipe_ingredients(_outfile, replaced_ingredients_with_gram_map, recipe_id_counter):
-    with open(_outfile,'a', encoding='utf-8', errors='ignore') as outfile:
+    with open(_outfile,'a') as outfile:
         for ingredient_and_gram_map_and_amount in replaced_ingredients_with_gram_map:
             usda_ingred, gram_map, amount = ingredient_and_gram_map_and_amount
             outfile.write("\t".join([str(recipe_id_counter),
@@ -181,14 +181,14 @@ def out_recipe_ingredients(_outfile, replaced_ingredients_with_gram_map, recipe_
 
 
 def out_recipe_tags(_outfile, recipe, recipe_id_counter):
-    with open(_outfile,'a', encoding='utf-8', errors='ignore') as outfile:
+    with open(_outfile,'a') as outfile:
         for tag in recipe.tags.items:
             outfile.write("\t".join([str(recipe_id_counter), tag]))
             outfile.write('\n')
 
 
 def out_tags(_outfile, recipe, tag_set):
-    with open(_outfile,'a', encoding='utf-8', errors='ignore') as outfile:
+    with open(_outfile,'a') as outfile:
         for tag in recipe.tags.items:
             if tag not in tag_set:
                 tag_set.add(tag)

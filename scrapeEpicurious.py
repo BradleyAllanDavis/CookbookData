@@ -26,16 +26,16 @@ def main():
 
     page_count = int(number_of_recipes_to_scrape / recipes_per_page)
 
-    _recipe_outfile = 'recipes.tsv'
-    with open(_recipe_outfile, 'w') as ofile: ofile.write('')
+    # Flat file output names
+    _recipe_outfile = 'epicurious/recipes.tsv'
+    _recipe_ingredients_outfile = 'epicurious/recipe_ingredients.tsv'
+    _recipe_tags_outfile = 'epicurious/recipe_tags.tsv'
+    _tags_outfile = 'epicurious/tags.tsv'
 
-    _recipe_ingredients_outfile = 'recipe_ingredients.tsv'
+    # Overwrite files to start anew
     with open(_recipe_ingredients_outfile, 'w') as ofile: ofile.write('')
-
-    _recipe_tags_outfile = 'recipe_tags.tsv'
+    with open(_recipe_outfile, 'w') as ofile: ofile.write('')
     with open(_recipe_tags_outfile, 'w') as ofile: ofile.write('')
-
-    _tags_outfile = 'tags.tsv'
     with open(_tags_outfile, 'w') as ofile: ofile.write('')
 
     tag_set = set()
@@ -56,6 +56,7 @@ def main():
             out_tags(_tags_outfile, recipe, tag_set)
 
             recipe_id_counter += 1
+
             # print_recipe(recipe)
             # print_ingredients_and_gram_map(replaced_ingredients_with_gram_map)
 

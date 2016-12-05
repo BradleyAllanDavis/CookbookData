@@ -56,6 +56,7 @@ def main():
             out_tags(_tags_outfile, recipe, tag_set)
 
             recipe_id_counter += 1
+            print(str(recipe_id_counter) + ' ' + recipe.name)
 
             # print_recipe(recipe)
             # print_ingredients_and_gram_map(replaced_ingredients_with_gram_map)
@@ -66,12 +67,15 @@ def parse_recipe(recipe_html):
     recipe_url = get_recipe_url(recipe_html)
     recipe_soup = BeautifulSoup(requests.get(recipe_url).text, "html5lib")
 
-    name = recipe_soup.find('div', class_='title-source').find('h1').get_text()
+    if recipe_soup.find('div', class_='title-source') is not None:
+        name = recipe_soup.find('div', class_='title-source').find('h1').get_text()
+    else:
+        name = "NoName"
 
     if recipe_soup.find('div', class_='dek') is not None:
         description = recipe_soup.find('div', class_='dek').get_text('p')
     else:
-        description = ""
+        description = "NoDescription"
 
     ingredients = Ingredients([i.text for i in recipe_soup.find('div', class_='ingredients-info').find_all('li', itemprop="ingredients")])
 

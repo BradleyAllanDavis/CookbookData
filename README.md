@@ -55,10 +55,8 @@ restrictions.
 
 ## Tools
 
-* RDBMS - MySQL
-* Python - Back-end
-* SQLAlchemy - Python to MySQL object relational mapping framework
-* Javascript - Front-end
+* RDBMS - PostgreSQL
+* Django/Python - Web back-end
 * Bootstrap - Front-end UI framework
 * Digital Ocean - Virtual Private Server/Web Hosting
 * Git/GitHub - Source code control

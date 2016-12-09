@@ -35,23 +35,23 @@ restrictions.
 
 ![ER Diagram](misc/ERDiagram.png?raw=true "ER Diagram")
 
-### Relational Schema (source of truth for django)
+### Relational Schema (source of truth for Django)
 
 * cookbook_user (**user_id**, password, first_name, last_name)
-* cookbook_savedsearch (**search_id**, **user_id**, search_name)
-* cookbook_recipe (**recipe_id**, title, description, instructions, is_private, parent_recipe, serves)
+* cookbook_foodgroup (**id**, name)
+* cookbook_grammapping (**ingredient**, **common_measure**, amount_grams)
+* cookbook_ingredientnutrient (**ingredient**, **nutrient**, amount)
+* cookbook_ingredient (**ingredient**, food_group, name)
+* cookbook_nutrient (**id**, unit, name)
+* cookbook_recipeingredient (**recipe**, **ingredient**, amount, unit)
+* cookbook_recipe (**id**, title, description, instructions, serves)
+* cookbook_savedsearch (**id**, **user_id**, search_name, recipe_search_term, ingredient_search_term)
+* cookbook_searchfoodgroup (**search**, **food_group**, include)
+* cookbook_searchtag (**search**, **tag**, include)
 * cookbook_tag (**tag_name**)
-* cookbook_ingredient (**ingredient_id**, foodgroup_id, name)
-* cookbook_foodgroup (**foodgroup_id**, name)
-* cookbook_nutrient (**nutrient_id**, unit, name)
-* cookbook_grammapping (**ingredient_id**, **common_measure**, amount)
-* cookbook_searchtag (**search_id**, **tag_name**, include)
-* cookbook_searchfoodgroup (**search_id**, **foodgroup_id**, include)
-* cookbook_userfavorite (**user_id**, **recipe_id**)
-* cookbook_usersubmission (**user_id**, **recipe_id**)
-* cookbook_recipeingredient (**recipe_id**, **ingredient_id**, amount, common_measure)
-* cookbook_recipetag (**recipe_id**, **tag_name**)
-* cookbook_ingredientnutrient (**ingredient_id**, **nutrient_id**, amount)
+* cookbook_userfavorite (**user**, **recipe**)
+* cookbook_usersubmission (**user**, **recipe**)
+* cookbook_recipetag (**recipe**, **tag**)
 
 ## Tools
 

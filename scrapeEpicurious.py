@@ -26,16 +26,16 @@ def main():
 
     page_count = int(number_of_recipes_to_scrape / recipes_per_page)
 
-    _recipe_outfile = 'recipes.tsv'
-    with open(_recipe_outfile, 'w') as ofile: ofile.write('')
+    # Flat file output names
+    _recipe_outfile = 'epicurious/recipes.tsv'
+    _recipe_ingredients_outfile = 'epicurious/recipe_ingredients.tsv'
+    _recipe_tags_outfile = 'epicurious/recipe_tags.tsv'
+    _tags_outfile = 'epicurious/tags.tsv'
 
-    _recipe_ingredients_outfile = 'recipe_ingredients.tsv'
+    # Overwrite files to start anew
     with open(_recipe_ingredients_outfile, 'w') as ofile: ofile.write('')
-
-    _recipe_tags_outfile = 'recipe_tags.tsv'
+    with open(_recipe_outfile, 'w') as ofile: ofile.write('')
     with open(_recipe_tags_outfile, 'w') as ofile: ofile.write('')
-
-    _tags_outfile = 'tags.tsv'
     with open(_tags_outfile, 'w') as ofile: ofile.write('')
 
     tag_set = set()
@@ -56,6 +56,8 @@ def main():
             out_tags(_tags_outfile, recipe, tag_set)
 
             recipe_id_counter += 1
+            print(str(recipe_id_counter) + ' ' + recipe.name)
+
             # print_recipe(recipe)
             # print_ingredients_and_gram_map(replaced_ingredients_with_gram_map)
 
@@ -65,12 +67,15 @@ def parse_recipe(recipe_html):
     recipe_url = get_recipe_url(recipe_html)
     recipe_soup = BeautifulSoup(requests.get(recipe_url).text, "html5lib")
 
-    name = recipe_soup.find('div', class_='title-source').find('h1').get_text()
+    if recipe_soup.find('div', class_='title-source') is not None:
+        name = recipe_soup.find('div', class_='title-source').find('h1').get_text()
+    else:
+        name = "NoName"
 
     if recipe_soup.find('div', class_='dek') is not None:
         description = recipe_soup.find('div', class_='dek').get_text('p')
     else:
-        description = ""
+        description = "NoDescription"
 
     ingredients = Ingredients([i.text for i in recipe_soup.find('div', class_='ingredients-info').find_all('li', itemprop="ingredients")])
 
@@ -161,7 +166,7 @@ def print_recipe(recipe):
     # recipe.pretty_out()
 
 def out_recipes(_outfile, recipe, recipe_id_counter):
-    with open(_outfile,'a', encoding='utf-8', errors='ignore') as outfile:
+    with open(_outfile,'a') as outfile:
         outfile.write("\t".join([str(recipe_id_counter),
                                  recipe.clean(recipe.name),
                                  recipe.clean(recipe.description),
@@ -170,7 +175,7 @@ def out_recipes(_outfile, recipe, recipe_id_counter):
 
 
 def out_recipe_ingredients(_outfile, replaced_ingredients_with_gram_map, recipe_id_counter):
-    with open(_outfile,'a', encoding='utf-8', errors='ignore') as outfile:
+    with open(_outfile,'a') as outfile:
         for ingredient_and_gram_map_and_amount in replaced_ingredients_with_gram_map:
             usda_ingred, gram_map, amount = ingredient_and_gram_map_and_amount
             outfile.write("\t".join([str(recipe_id_counter),
@@ -181,14 +186,14 @@ def out_recipe_ingredients(_outfile, replaced_ingredients_with_gram_map, recipe_
 
 
 def out_recipe_tags(_outfile, recipe, recipe_id_counter):
-    with open(_outfile,'a', encoding='utf-8', errors='ignore') as outfile:
+    with open(_outfile,'a') as outfile:
         for tag in recipe.tags.items:
             outfile.write("\t".join([str(recipe_id_counter), tag]))
             outfile.write('\n')
 
 
 def out_tags(_outfile, recipe, tag_set):
-    with open(_outfile,'a', encoding='utf-8', errors='ignore') as outfile:
+    with open(_outfile,'a') as outfile:
         for tag in recipe.tags.items:
             if tag not in tag_set:
                 tag_set.add(tag)

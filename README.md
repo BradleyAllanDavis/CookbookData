@@ -35,25 +35,23 @@ restrictions.
 
 ![ER Diagram](misc/ERDiagram.png?raw=true "ER Diagram")
 
-### Relational Schema
+### Relational Schema (source of truth for django)
 
-* User (**UserID**, Password, FirstName, LastName)
-* SavedSearches (**SearchID**, **UserID**, SearchName)
-* Recipes (**RecipeID**, Title, Description, Instructions, IsPrivate)
-* Tags (**TagName**)
-* Ingredients (**IngredientID**, FoodGroupID, Name)
-* FoodGroup (**FoodGroupID**, Name)
-* Nutrients (**NutrientID**, Unit, Name)
-* GramMappings (**IngredientID**, **AmountCommonMeasure**, **CommonMeasure**, SequenceNumber, AmountGrams)
-* SearchTags (**SearchID**, **TagName**, Include)
-* SearchFoodGroup (**SearchID**, **FoodGroupID**, Include)
-* UserFavorites (**UserID**, **RecipeID**)
-* UserSubmittedRecipes (**UserID**, **RecipeID**)
-* ParentRecipe (**ParentRecipeID**, **ChildRecipeID**)
-* RecipeIngredients (**RecipeID**, **IngredientID**, Amount, CommonMeasure)
-* RecipeTags (**RecipeID**, **TagName**)
-* IngredientNutrients (**IngredientID**, **NutrientID**, Amount)
-* LoggedInUsers (**UserID**)
+* cookbook_user (**user_id**, password, first_name, last_name)
+* cookbook_savedsearch (**search_id**, **user_id**, search_name)
+* cookbook_recipe (**recipe_id**, title, description, instructions, is_private, parent_recipe, serves)
+* cookbook_tag (**tag_name**)
+* cookbook_ingredient (**ingredient_id**, foodgroup_id, name)
+* cookbook_foodgroup (**foodgroup_id**, name)
+* cookbook_nutrient (**nutrient_id**, unit, name)
+* cookbook_grammapping (**ingredient_id**, **common_measure**, amount)
+* cookbook_searchtag (**search_id**, **tag_name**, include)
+* cookbook_searchfoodgroup (**search_id**, **foodgroup_id**, include)
+* cookbook_userfavorite (**user_id**, **recipe_id**)
+* cookbook_usersubmission (**user_id**, **recipe_id**)
+* cookbook_recipeingredient (**recipe_id**, **ingredient_id**, amount, common_measure)
+* cookbook_recipetag (**recipe_id**, **tag_name**)
+* cookbook_ingredientnutrient (**ingredient_id**, **nutrient_id**, amount)
 
 ## Tools
 

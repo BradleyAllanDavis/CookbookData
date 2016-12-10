@@ -6,4 +6,4 @@
 /* \copy cookbook_ingredientnutrient (id, ingredient_id, nutrient_id, amount) FROM 'usda/nut_data_w_id.tsv' DELIMITER E'\t'; */
 /* \copy cookbook_recipetag (id, recipe_id, tag_id) FROM 'epicurious/recipe_tags_w_id.tsv' DELIMITER E'\t'; */
 /* \copy cookbook_grammapping (id, ingredient_id, common_measure, amount_grams) FROM 'usda/weight_final.tsv' DELIMITER E'\t'; */
-\copy cookbook_recipeingredient (id, recipe_id, ingredient_id, unit_id, amount) FROM 'epicurious/recipe_ingredients_final.tsv' DELIMITER E'\t';
+\copy cookbook_recipeingredient (id, recipe_id, ingredient_id, gram_mapping_id, amount) FROM 'epicurious/recipe_ingredients_final.tsv' DELIMITER E'\t';

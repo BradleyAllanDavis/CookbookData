@@ -17,4 +17,4 @@ for line in recIngIn:
     com_mes = splitLine[3]
     for i in gramMapIdList:
         if i[0] == (ing_id, com_mes):
-            recIngOut.write('\t'.join([splitLine[0], splitLine[1], i[1], splitLine[4]]))
+            recIngOut.write('\t'.join([splitLine[0], splitLine[1], ing_id, i[1], splitLine[4]]))

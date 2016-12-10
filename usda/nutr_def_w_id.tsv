@@ -1,0 +1,150 @@
+1	203	g	Protein
+2	204	g	Total lipid (fat)
+3	205	g	Carbohydrate, by difference
+4	207	g	Ash
+5	208	kcal	Energy
+6	209	g	Starch
+7	210	g	Sucrose
+8	211	g	Glucose (dextrose)
+9	212	g	Fructose
+10	213	g	Lactose
+11	214	g	Maltose
+12	221	g	Alcohol, ethyl
+13	255	g	Water
+14	257	g	Adjusted Protein
+15	262	mg	Caffeine
+16	263	mg	Theobromine
+17	268	kJ	Energy
+18	269	g	Sugars, total
+19	287	g	Galactose
+20	291	g	Fiber, total dietary
+21	301	mg	Calcium, Ca
+22	303	mg	Iron, Fe
+23	304	mg	Magnesium, Mg
+24	305	mg	Phosphorus, P
+25	306	mg	Potassium, K
+26	307	mg	Sodium, Na
+27	309	mg	Zinc, Zn
+28	312	mg	Copper, Cu
+29	313	ug	Fluoride, F
+30	315	mg	Manganese, Mn
+31	317	ug	Selenium, Se
+32	318	IU	Vitamin A, IU
+33	319	ug	Retinol
+34	320	ug	Vitamin A, RAE
+35	321	ug	Carotene, beta
+36	322	ug	Carotene, alpha
+37	323	mg	Vitamin E (alpha-tocopherol)
+38	324	IU	Vitamin D
+39	325	ug	Vitamin D2 (ergocalciferol)
+40	326	ug	Vitamin D3 (cholecalciferol)
+41	328	ug	Vitamin D (D2 + D3)
+42	334	ug	Cryptoxanthin, beta
+43	337	ug	Lycopene
+44	338	ug	Lutein + zeaxanthin
+45	341	mg	Tocopherol, beta
+46	342	mg	Tocopherol, gamma
+47	343	mg	Tocopherol, delta
+48	344	mg	Tocotrienol, alpha
+49	345	mg	Tocotrienol, beta
+50	346	mg	Tocotrienol, gamma
+51	347	mg	Tocotrienol, delta
+52	401	mg	Vitamin C, total ascorbic acid
+53	404	mg	Thiamin
+54	405	mg	Riboflavin
+55	406	mg	Niacin
+56	410	mg	Pantothenic acid
+57	415	mg	Vitamin B-6
+58	417	ug	Folate, total
+59	418	ug	Vitamin B-12
+60	421	mg	Choline, total
+61	428	ug	Menaquinone-4
+62	429	ug	Dihydrophylloquinone
+63	430	ug	Vitamin K (phylloquinone)
+64	431	ug	Folic acid
+65	432	ug	Folate, food
+66	435	ug	Folate, DFE
+67	454	mg	Betaine
+68	501	g	Tryptophan
+69	502	g	Threonine
+70	503	g	Isoleucine
+71	504	g	Leucine
+72	505	g	Lysine
+73	506	g	Methionine
+74	507	g	Cystine
+75	508	g	Phenylalanine
+76	509	g	Tyrosine
+77	510	g	Valine
+78	511	g	Arginine
+79	512	g	Histidine
+80	513	g	Alanine
+81	514	g	Aspartic acid
+82	515	g	Glutamic acid
+83	516	g	Glycine
+84	517	g	Proline
+85	518	g	Serine
+86	521	g	Hydroxyproline
+87	573	mg	Vitamin E, added
+88	578	ug	Vitamin B-12, added
+89	601	mg	Cholesterol
+90	605	g	Fatty acids, total trans
+91	606	g	Fatty acids, total saturated
+92	607	g	4:0
+93	608	g	6:0
+94	609	g	8:0
+95	610	g	10:0
+96	611	g	12:0
+97	612	g	14:0
+98	613	g	16:0
+99	614	g	18:0
+100	615	g	20:0
+101	617	g	18:1 undifferentiated
+102	618	g	18:2 undifferentiated
+103	619	g	18:3 undifferentiated
+104	620	g	20:4 undifferentiated
+105	621	g	22:6 n-3 (DHA)
+106	624	g	22:0
+107	625	g	14:1
+108	626	g	16:1 undifferentiated
+109	627	g	18:4
+110	628	g	20:1
+111	629	g	20:5 n-3 (EPA)
+112	630	g	22:1 undifferentiated
+113	631	g	22:5 n-3 (DPA)
+114	636	mg	Phytosterols
+115	638	mg	Stigmasterol
+116	639	mg	Campesterol
+117	641	mg	Beta-sitosterol
+118	645	g	Fatty acids, total monounsaturated
+119	646	g	Fatty acids, total polyunsaturated
+120	652	g	15:0
+121	653	g	17:0
+122	654	g	24:0
+123	662	g	16:1 t
+124	663	g	18:1 t
+125	664	g	22:1 t
+126	665	g	18:2 t not further defined
+127	666	g	18:2 i
+128	669	g	18:2 t,t
+129	670	g	18:2 CLAs
+130	671	g	24:1 c
+131	672	g	20:2 n-6 c,c
+132	673	g	16:1 c
+133	674	g	18:1 c
+134	675	g	18:2 n-6 c,c
+135	676	g	22:1 c
+136	685	g	18:3 n-6 c,c,c
+137	687	g	17:1
+138	689	g	20:3 undifferentiated
+139	693	g	Fatty acids, total trans-monoenoic
+140	695	g	Fatty acids, total trans-polyenoic
+141	696	g	13:0
+142	697	g	15:1
+143	851	g	18:3 n-3 c,c,c (ALA)
+144	852	g	20:3 n-3
+145	853	g	20:3 n-6
+146	855	g	20:4 n-6
+147	856	g	18:3i
+148	857	g	21:5
+149	858	g	22:4
+150	859	g	18:1-11 t (18:1t n-7)

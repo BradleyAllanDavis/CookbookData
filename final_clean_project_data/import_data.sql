@@ -1,5 +1,5 @@
 \copy cookbook_recipe (id, title, description, instructions, serves) FROM 'recipe.tsv' DELIMITER E'\t';
-UPDATE cookbook_recipe SET description = null WHERE description = 'NoDescription';
+UPDATE cookbook_recipe SET description = 'No description' WHERE description IS 'NoDescription';
 \copy cookbook_foodgroup (id, name) FROM 'foodgroup.tsv' DELIMITER E'\t';
 \copy cookbook_tag (tag_name) FROM 'tag.tsv' DELIMITER E'\t';
 \copy cookbook_ingredient (id, food_group_id, name) FROM 'ingredient.tsv' DELIMITER E'\t';

@@ -20,26 +20,26 @@ WHERE
 	END
 	AND
 	CASE /*Search on FoodGroups (include)*/
-		WHEN (SELECT CASE WHEN count(*) > 0 THEN True ELSE False END FROM cookbook_searchfoodgroup WHERE id = @GIVEN AND include = 't')
-			THEN cookbook_ingredient.food_group_id in (SELECT food_group_id FROM cookbook_searchfoodgroup WHERE id = @GIVEN AND include = 't')
+		WHEN (SELECT CASE WHEN count(*) > 0 THEN True ELSE False END FROM cookbook_searchfoodgroup WHERE search_id = @GIVEN AND include = 't')
+			THEN cookbook_ingredient.food_group_id in (SELECT food_group_id FROM cookbook_searchfoodgroup WHERE search_id = @GIVEN AND include = 't')
 		ELSE True
 	END
 	AND
 	CASE /*Search on FoodGroups (exclude)*/
-		WHEN (SELECT CASE WHEN count(*) > 0 THEN True ELSE False END FROM cookbook_searchfoodgroup WHERE id = @GIVEN AND include = 'f')
-			THEN cookbook_ingredient.food_group_id not in (SELECT food_group_id FROM cookbook_searchfoodgroup WHERE id = @GIVEN AND include = 'f')
+		WHEN (SELECT CASE WHEN count(*) > 0 THEN True ELSE False END FROM cookbook_searchfoodgroup WHERE search_id = @GIVEN AND include = 'f')
+			THEN cookbook_ingredient.food_group_id not in (SELECT food_group_id FROM cookbook_searchfoodgroup WHERE search_id = @GIVEN AND include = 'f')
 		ELSE True
 	END
 	AND
 	CASE /*Search on Tags (include)*/
-		WHEN (SELECT CASE WHEN count(*) > 0 THEN True ELSE False END FROM cookbook_searchtag WHERE id = @GIVEN AND include = 't')
-			THEN cookbook_recipetag.tag_id in (SELECT tag_id FROM cookbook_searchtag WHERE id = @GIVEN and include = 't')
+		WHEN (SELECT CASE WHEN count(*) > 0 THEN True ELSE False END FROM cookbook_searchtag WHERE search_id = @GIVEN AND include = 't')
+			THEN cookbook_recipetag.tag_id in (SELECT tag_id FROM cookbook_searchtag WHERE search_id = @GIVEN and include = 't')
 		ELSE True
 	END
 	AND
 	CASE /*Search on Tags (exclude)*/
-		WHEN (SELECT CASE WHEN count(*) > 0 THEN True ELSE False END FROM cookbook_searchtag WHERE id = @GIVEN AND include = 'f')
-			THEN cookbook_recipetag.tag_id not in (SELECT tag_id FROM cookbook_searchtag WHERE id = @GIVEN and include = 'f')
+		WHEN (SELECT CASE WHEN count(*) > 0 THEN True ELSE False END FROM cookbook_searchtag WHERE search_id = @GIVEN AND include = 'f')
+			THEN cookbook_recipetag.tag_id not in (SELECT tag_id FROM cookbook_searchtag WHERE search_id = @GIVEN and include = 'f')
 		ELSE True
 	END
 ;
